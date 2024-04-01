@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div></div>
+  <div>分类管理</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

@@ -7,12 +7,17 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/layout/index.vue'),
-      redirect: '/home',
+      redirect: '/goods',
       children: [
         {
           path: '/home',
           name: 'HomeView',
           component: () => import('@/views/home/HomeView.vue')
+        },
+        {
+          path: '/goods',
+          name: 'GoodsView',
+          component: () => import('@/views/goods/GoodsView.vue')
         },
         {
           path: '/category',
@@ -28,6 +33,11 @@ const router = createRouter({
           path: '/tag',
           name: 'TagView',
           component: () => import('@/views/tag/TagView.vue')
+        },
+        {
+          path: '/analysis',
+          name: 'AnalysisView',
+          component: () => import('@/views/analysis/AnalysisView.vue')
         },
         {
           path: '/user',

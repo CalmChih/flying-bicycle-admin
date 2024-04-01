@@ -8,13 +8,18 @@ export const useUserStore = defineStore(
       tokenName: '',
       tokenValue: ''
     })
-    const setTokenInfo = (token) => {
-      tokenInfo.value = token
+    const setTokenInfo = ({ tokenName, tokenValue }) => {
+      tokenInfo.value.tokenName = tokenName
+      tokenInfo.value.tokenValue = tokenValue
     }
 
-    return { tokenInfo, setTokenInfo }
+    const removeTokenInfo = () => {
+      tokenInfo.value = { tokenName: '', tokenValue: '' }
+    }
+
+    return { tokenInfo, setTokenInfo, removeTokenInfo }
   },
   {
-    persist: true
+    persist: { paths: ['tokenInfo'] }
   }
 )

@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div></div>
+  <div>统计分析</div>
 </template>
 
 <style scoped></style>

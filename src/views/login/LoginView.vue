@@ -5,7 +5,6 @@ import { adminLogin } from '@/api/login.js'
 import { useUserStore } from '@/stores/index.js'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-const [messageApi] = message.useMessage()
 
 const formState = ref({
   username: '',
@@ -35,7 +34,7 @@ const router = useRouter()
 const login = async (values) => {
   const { data } = await adminLogin(values)
   userStore.setTokenInfo(data)
-  messageApi.success('登录成功')
+  message.success('登录成功')
   await router.push('/')
 }
 </script>

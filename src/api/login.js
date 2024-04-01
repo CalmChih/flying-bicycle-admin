@@ -5,3 +5,7 @@ export const adminLogin = (account) => {
     ...account
   })
 }
+
+export const logout = () => {
+  return request.post('/logout')
+}

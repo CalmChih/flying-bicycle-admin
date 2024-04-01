@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div></div>
+  <div>标签管理</div>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped></style>
