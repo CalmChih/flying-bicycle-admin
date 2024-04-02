@@ -1,16 +1,9 @@
 import request from '@/util/request.js'
 
 export const getGoodsList = (searchParam) => {
-  return request.get('/goods/getGoodsList', {
-    params: {
-      currentPage: searchParam.currentPage,
-      pageSize: searchParam.pageSize
-    }
+  return request.post('/goods/getGoodsList', {
+    ...searchParam
   })
-}
-
-export const getGoodsTotal = () => {
-  return request.get('/goods/getGoodsTotal')
 }
 
 export const updateGoods = (goodsItem) => {
@@ -31,4 +24,8 @@ export const insertGoods = (goodsItem) => {
   return request.post('/goods/insertGoods', {
     ...goodsItem
   })
+}
+
+export const deleteGoods = (goodsId) => {
+  return request.delete('/goods/deleteGoods', { params: { goodsId } })
 }

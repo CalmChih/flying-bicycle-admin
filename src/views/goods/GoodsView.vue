@@ -1,12 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import {
-  getGoodsInfoByTitle,
-  getGoodsList,
-  getGoodsTotal,
-  insertGoods,
-  updateGoods
-} from '@/api/goods.js'
+import { deleteGoods, getGoodsList, insertGoods, updateGoods } from '@/api/goods.js'
 import { getCategoryList } from '@/api/category.js'
 import _ from 'lodash'
 import { message } from 'ant-design-vue'
@@ -77,24 +71,35 @@ const searchParam = ref({
   pageSize: 10,
   goodsTitle: ''
 })
-const GoodsTotal = async () => {
-  const { data } = await getGoodsTotal()
-  pagination.value.total = data
+
+const tableLoading = ref(false)
+
+const resetPage = () => {
+  searchParam.value.currentPage = 1
+  pagination.value.current = 1
+  searchParam.value.pageSize = parseInt(pagination.value.pageSizeOptions[0])
 }
-GoodsTotal()
+
 const getGoodsListByPage = async (page) => {
+  tableLoading.value = true
+  resetPage()
   if (page !== null && page !== undefined) {
     pagination.value.current = page.current
     searchParam.value.currentPage = page.current
     searchParam.value.pageSize = page.pageSize
   }
-  const res = await getGoodsList(searchParam.value)
-  tableData.value = res.data
+  const {
+    data: { list, total }
+  } = await getGoodsList(searchParam.value)
+  tableData.value = list
   tableData.value.forEach((goods) => {
     goods.goodsTagsArr = goods.goodsTags.split(',')
   })
+  pagination.value.total = total
+  tableLoading.value = false
 }
 getGoodsListByPage()
+
 const openEditModal = async (goods) => {
   editModalVisible.value = true
   goodsItem.value = _.cloneDeep(goods)
@@ -102,8 +107,11 @@ const openEditModal = async (goods) => {
   categoryList.value = data
 }
 
-const deleteGoods = (id) => {
-  console.log(id)
+const deleteGoodsItem = async (goodsId) => {
+  console.log(goodsId)
+  const { msg } = await deleteGoods(goodsId)
+  message.success(msg || '删除成功')
+  await getGoodsListByPage()
 }
 
 const editModalVisible = ref(false)
@@ -141,17 +149,7 @@ const updateGoodsInfo = async () => {
 }
 
 const onSearch = async () => {
-  const { data } = await getGoodsInfoByTitle(searchParam.value)
-  if (data === null) {
-    tableData.value = []
-  } else {
-    tableData.value = data
-    console.log(tableData.value)
-    tableData.value.forEach((goods) => {
-      goods.goodsTagsArr = goods.goodsTags.split(',')
-    })
-  }
-  pagination.value.total = tableData.value.length
+  await getGoodsListByPage()
 }
 
 const insertGoodsItem = async () => {
@@ -180,9 +178,10 @@ const categoryChanged = (categoryId) => {
     <a-button type="primary" @click="openSaveModal">新增</a-button>
     <a-input-search
       v-model:value="searchParam.goodsTitle"
-      placeholder="商品名字"
+      placeholder="商品名称"
       enter-button
       @search="onSearch"
+      :allowClear="true"
       style="width: 250px"
     />
   </div>
@@ -191,6 +190,7 @@ const categoryChanged = (categoryId) => {
     :data-source="tableData"
     :scroll="{ x: 'max-content', y: '75vh', scrollToFirstRowOnChange: true }"
     :pagination="pagination"
+    :loading="tableLoading"
     @change="getGoodsListByPage"
     size="large"
   >
@@ -211,7 +211,15 @@ const categoryChanged = (categoryId) => {
         <span>
           <a @click="openEditModal(record)">编辑</a>
           <a-divider type="vertical" />
-          <a @click="deleteGoods(record.id)">删除</a>
+          <!--          <a @click="deleteGoods(record.id)">删除</a>-->
+          <a-popconfirm
+            title="确定删除吗?"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="deleteGoodsItem(record.goodsId)"
+          >
+            <a href="#">删除</a>
+          </a-popconfirm>
         </span>
       </template>
     </template>
