@@ -103,8 +103,10 @@ getGoodsListByPage()
 const openEditModal = async (goods) => {
   editModalVisible.value = true
   goodsItem.value = _.cloneDeep(goods)
-  const { data } = await getCategoryList()
-  categoryList.value = data
+  const {
+    data: { list }
+  } = await getCategoryList()
+  categoryList.value = list
 }
 
 const deleteGoodsItem = async (goodsId) => {
@@ -143,9 +145,9 @@ getTags()
 const updateGoodsInfo = async () => {
   editModalVisible.value = false
   await updateGoods(goodsItem.value)
-  await getGoodsListByPage()
   goodsItem.value = {}
   message.success('保存成功')
+  await getGoodsListByPage()
 }
 
 const onSearch = async () => {
@@ -156,11 +158,15 @@ const insertGoodsItem = async () => {
   saveModalVisible.value = false
   await insertGoods(goodsItem.value)
   message.success('新增商品成功')
+  goodsItem.value = {}
+  await getGoodsListByPage()
 }
 const openSaveModal = async () => {
   saveModalVisible.value = true
-  const { data } = await getCategoryList()
-  categoryList.value = data
+  const {
+    data: { list }
+  } = await getCategoryList()
+  categoryList.value = list
 }
 
 const tagChanged = (tagsArr) => {

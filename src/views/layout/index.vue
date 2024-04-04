@@ -49,7 +49,7 @@ const adminLogout = async () => {
 </script>
 
 <template>
-  <a-layout style="min-height: 100vh">
+  <a-layout style="height: 100%">
     <a-layout-header style="background: #fff; padding: 0; height: 50px; z-index: 100">
       <div class="header">
         <span class="title"> 自行车在线租赁管理系统 </span>
@@ -67,7 +67,7 @@ const adminLogout = async () => {
     </a-layout-header>
 
     <a-layout>
-      <a-layout-sider v-model:collapsed="collapsed" collapsible class="sider">
+      <a-layout-sider v-model:collapsed="collapsed" collapsible>
         <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" @click="toMenu">
           <a-menu-item key="GoodsView" title="商品管理">
             <ShopOutlined />
@@ -99,20 +99,9 @@ const adminLogout = async () => {
 </template>
 
 <style scoped>
-.layout-left {
-  //display: flex;
-  .sider {
-    //position: fixed;
-    //min-width: 80px;
-    //max-width: 200px;
-    //height: 100vh;
-  }
-}
 .header {
   display: flex;
   flex-direction: row;
-  //position: fixed;
-  //left: 200px;
   width: 100%;
   justify-content: space-between;
   .title {
@@ -121,10 +110,5 @@ const adminLogout = async () => {
     font-weight: bold;
     text-align: center;
   }
-}
-.content {
-  //position: relative;
-  //left: 200px;
-  //overflow-x: hidden;
 }
 </style>

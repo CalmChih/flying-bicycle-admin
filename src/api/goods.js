@@ -12,14 +12,6 @@ export const updateGoods = (goodsItem) => {
   })
 }
 
-export const getGoodsInfoByTitle = (searchParam) => {
-  return request.get('/goods/getGoodsInfoByTitle', {
-    params: {
-      goodsTitle: searchParam.goodsTitle
-    }
-  })
-}
-
 export const insertGoods = (goodsItem) => {
   return request.post('/goods/insertGoods', {
     ...goodsItem
