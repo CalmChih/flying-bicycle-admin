@@ -4,7 +4,7 @@ import { deleteGoods, getGoodsList, insertGoods, updateGoods } from '@/api/goods
 import { getCategoryList } from '@/api/category.js'
 import _ from 'lodash'
 import { message } from 'ant-design-vue'
-import { getTagList } from '@/api/Tags.js'
+import { getTagList } from '@/api/tags.js'
 
 const pagination = ref({
   showSizeChanger: true, // 是否可以改变每页显示的条数
@@ -135,8 +135,10 @@ const tagOptions = ref([])
 const colorList = ['blue', 'purple', 'cyan']
 
 const getTags = async () => {
-  const { data } = await getTagList()
-  data?.forEach((tag) => {
+  const {
+    data: { list }
+  } = await getTagList()
+  list?.forEach((tag) => {
     tagOptions.value.push({ label: tag.tagName, value: tag.tagName })
   })
 }
