@@ -196,7 +196,7 @@ const categoryChanged = (categoryId) => {
   <a-table
     :columns="columns"
     :data-source="tableData"
-    :scroll="{ x: 'max-content', y: '75vh', scrollToFirstRowOnChange: true }"
+    :scroll="{ x: 'max-content', y: '70vh', scrollToFirstRowOnChange: true }"
     :pagination="pagination"
     :loading="tableLoading"
     @change="getGoodsListByPage"

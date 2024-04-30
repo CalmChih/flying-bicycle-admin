@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore(
@@ -8,18 +8,28 @@ export const useUserStore = defineStore(
       tokenName: '',
       tokenValue: ''
     })
-    const setTokenInfo = ({ tokenName, tokenValue }) => {
-      tokenInfo.value.tokenName = tokenName
-      tokenInfo.value.tokenValue = tokenValue
+    const username = ref('')
+    const setTokenInfo = (token) => {
+      tokenInfo.value = token
+    }
+    const setUsername = (account) => {
+      username.value = account
+    }
+    const isLogin = computed(() => {
+      return tokenInfo.value.tokenValue !== ''
+    })
+    const isAdmin = computed(() => {
+      return tokenInfo.value.loginType !== '' && tokenInfo.value.loginType === 'admin'
+    })
+    const logout = () => {
+      localStorage.removeItem('userInfo')
+      tokenInfo.value = {}
+      username.value = ''
     }
 
-    const removeTokenInfo = () => {
-      tokenInfo.value = { tokenName: '', tokenValue: '' }
-    }
-
-    return { tokenInfo, setTokenInfo, removeTokenInfo }
+    return { tokenInfo, setTokenInfo, setUsername, isLogin, isAdmin, logout }
   },
   {
-    persist: { paths: ['tokenInfo'] }
+    persist: true
   }
 )

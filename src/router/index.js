@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { message } from 'ant-design-vue'
+import { useUserStore } from '@/stores/index.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -30,6 +32,11 @@ const router = createRouter({
           component: () => import('@/views/order/OrderView.vue')
         },
         {
+          path: '/afterSales',
+          name: 'AfterSalesView',
+          component: () => import('@/views/order/AfterSalesView.vue')
+        },
+        {
           path: '/tag',
           name: 'TagView',
           component: () => import('@/views/tag/TagView.vue')
@@ -52,6 +59,27 @@ const router = createRouter({
       component: () => import('@/views/login/LoginView.vue')
     }
   ]
+})
+
+const noAuthUrls = '/login'
+
+router.beforeEach((to) => {
+  const userStore = useUserStore()
+  if (noAuthUrls === to.path || (userStore.isLogin && userStore.isAdmin)) {
+    return true
+  }
+  if (!userStore.isAdmin) {
+    message.error('该账号不是管理员账号')
+  } else {
+    message.error('请登录后再试')
+  }
+  router.push({
+    path: '/login',
+    query: {
+      backUrl: to.fullPath
+    }
+  })
+  return false
 })
 
 export default router

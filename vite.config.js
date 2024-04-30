@@ -6,6 +6,10 @@ import Components from 'unplugin-vue-components/vite'
 import { AntDesignVueResolver } from 'unplugin-vue-components/resolvers'
 
 export default defineConfig({
+  server: {
+    port: 8025,
+    open: true
+  },
   plugins: [
     vue(),
     Components({

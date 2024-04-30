@@ -1,12 +1,12 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import {
-  ShopOutlined,
   FunnelPlotOutlined,
   TagOutlined,
   AccountBookOutlined,
   LineChartOutlined,
-  UserOutlined
+  UserOutlined,
+  ShoppingOutlined
 } from '@ant-design/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 import { logout } from '@/api/login.js'
@@ -18,6 +18,8 @@ const selectedKeys = ref([])
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+
+document.body.style.overflow = 'hidden'
 
 onMounted(() => {
   selectedKeys.value = [route.name]
@@ -36,21 +38,22 @@ const pageHeader = [
   { key: 'CategoryView', title: '分类管理' },
   { key: 'TagView', title: '标签管理' },
   { key: 'OrderView', title: '订单管理' },
+  { key: 'AfterSalesView', title: '售后管理' },
   { key: 'AnalysisView', title: '统计分析' }
 ]
 const selectedMenuTitle = ref('')
 
 const adminLogout = async () => {
   await logout()
-  userStore.removeTokenInfo()
+  userStore.logout()
   message.success('退出登录成功')
   await router.push('/login')
 }
 </script>
 
 <template>
-  <a-layout style="height: 100%">
-    <a-layout-header style="background: #fff; padding: 0; height: 50px; z-index: 100">
+  <a-layout class="container">
+    <a-layout-header class="fixed-nav-bar">
       <div class="header">
         <span class="title"> 自行车在线租赁管理系统 </span>
         <a-dropdown placement="bottom">
@@ -66,8 +69,8 @@ const adminLogout = async () => {
       </div>
     </a-layout-header>
 
-    <a-layout>
-      <a-layout-sider v-model:collapsed="collapsed" collapsible>
+    <a-layout class="content-container">
+      <a-layout-sider v-model:collapsed="collapsed" collapsible class="left-menu">
         <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline" @click="toMenu">
           <a-menu-item key="GoodsView" title="商品管理">
             <ShopOutlined />
@@ -85,13 +88,17 @@ const adminLogout = async () => {
             <AccountBookOutlined />
             <span>订单管理</span>
           </a-menu-item>
+          <a-menu-item key="AfterSalesView" title="售后管理">
+            <ShoppingOutlined />
+            <span>售后管理</span>
+          </a-menu-item>
           <a-menu-item key="AnalysisView" title="统计分析">
             <LineChartOutlined />
             <span>统计分析</span>
           </a-menu-item>
         </a-menu>
       </a-layout-sider>
-      <a-layout-content style="margin: 16px 16px" class="content">
+      <a-layout-content style="margin: 16px 16px" class="right-content">
         <router-view />
       </a-layout-content>
     </a-layout>
@@ -105,10 +112,40 @@ const adminLogout = async () => {
   width: 100%;
   justify-content: space-between;
   .title {
-    margin-left: 20px;
     font-size: 20px;
     font-weight: bold;
     text-align: center;
+  }
+}
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  .fixed-nav-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: #fcfcfc;
+    width: 100%; /* 设置宽度为100% */
+  }
+  .content-container {
+    display: flex;
+    flex-direction: row;
+    height: calc(100% - /* 顶部导航栏的高度，假设为64px */ 64px);
+    .left-menu {
+      position: sticky;
+      top: 64px; /* 与顶部导航栏底部对齐 */
+      height: calc(100% - 64px); /* 减去顶部导航栏高度 */
+      /* 其他样式，如宽度、背景色等 */
+    }
+    .right-content {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-top: 64px; /* 为顶部导航栏留出空间 */
+      /* 其他样式 */
+    }
   }
 }
 </style>

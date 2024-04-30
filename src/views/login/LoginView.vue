@@ -3,7 +3,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons-vue'
 import { ref } from 'vue'
 import { adminLogin } from '@/api/login.js'
 import { useUserStore } from '@/stores/index.js'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 
 const formState = ref({
@@ -12,11 +12,10 @@ const formState = ref({
 })
 const rules = {
   username: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
+    { required: true, message: '请输入账号', trigger: 'blur' },
     {
-      pattern:
-        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-      message: '邮箱格式错误，请填写正确的邮箱',
+      pattern: /^\S{5,15}$/,
+      message: '账号长度为5~15位，由任意字符组成',
       trigger: 'blur'
     }
   ],
@@ -31,11 +30,14 @@ const rules = {
 }
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 const login = async (values) => {
   const { data } = await adminLogin(values)
   userStore.setTokenInfo(data)
+  userStore.setUsername(values.username)
   message.success('登录成功')
-  await router.push('/')
+  const url = route.query.backUrl || '/'
+  await router.replace(url)
 }
 </script>
 

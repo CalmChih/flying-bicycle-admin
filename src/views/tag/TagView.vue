@@ -145,8 +145,8 @@ const openSaveModal = async () => {
     okText="保存"
   >
     <a-form :label-col="{ span: 4 }" :wrapper-col="{ span: 16 }" :model="tagItem">
-      <a-form-item label="分类名称">
-        <a-input v-model:value="tagItem.categoryName" />
+      <a-form-item label="标签名称">
+        <a-input v-model:value="tagItem.tagName" />
       </a-form-item>
     </a-form>
   </a-modal>

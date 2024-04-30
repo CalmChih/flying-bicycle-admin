@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useUserStore } from '@/stores/index.js'
 import { message } from 'ant-design-vue'
+import router from '@/router/index.js'
 
 const instance = axios.create({
   baseURL: 'http://localhost:8002/',
@@ -29,10 +30,16 @@ instance.interceptors.response.use(
   function (response) {
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
-    if (response.data.code === '200') {
-      return response.data
+    if (response.data.code === '401') {
+      message.error('请登录后访问')
+      router.push('/login').then(() => Promise.reject('请登录后访问'))
+      return
     }
-    message.error(response.data.msg || '操作失败，请稍后再试')
+    if (response.data.code !== '200') {
+      message.error(response.data.msg)
+      return Promise.reject(response.data.msg)
+    }
+    return response.data
   },
   function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
