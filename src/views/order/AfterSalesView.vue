@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { getAfterSalesByOrderId, getAfterSalesList } from '@/api/afterSales.js'
+import {
+  getAfterSalesByOrderId,
+  getAfterSalesList,
+  updateAfterSalesInfo
+} from '@/api/afterSales.js'
 
 const pagination = ref({
   showSizeChanger: true, // 是否可以改变每页显示的条数
@@ -16,6 +20,20 @@ const columns = [
     width: 120,
     dataIndex: 'orderId',
     key: 'orderId',
+    fixed: 'left'
+  },
+  {
+    title: '申请退款金额',
+    dataIndex: 'requestRefundAmount',
+    key: 'requestRefundAmount',
+    width: 100,
+    fixed: 'left'
+  },
+  {
+    title: '退款理由',
+    dataIndex: 'refundReason',
+    key: 'refundReason',
+    width: 200,
     fixed: 'left'
   },
   {
@@ -37,22 +55,34 @@ const columns = [
     width: 120
   },
   {
+    title: '租赁开始时间',
+    dataIndex: 'reservationStartTime',
+    key: 'reservationStartTime',
+    width: 160
+  },
+  {
+    title: '租赁结束时间',
+    dataIndex: 'reservationEndTime',
+    key: 'reservationEndTime',
+    width: 160
+  },
+  {
+    title: '支付时间',
+    dataIndex: 'payTime',
+    key: 'payTime',
+    width: 160
+  },
+  {
+    title: '售后创建时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
+    width: 160
+  },
+  {
     title: '总价格',
     dataIndex: 'totalPrice',
     key: 'totalPrice',
     width: 80
-  },
-  {
-    title: '申请退款金额',
-    dataIndex: 'requestRefundAmount',
-    key: 'requestRefundAmount',
-    width: 100
-  },
-  {
-    title: '退款理由',
-    dataIndex: 'refundReason',
-    key: 'refundReason',
-    width: 200
   },
   {
     title: '实际退款金额',
@@ -65,12 +95,6 @@ const columns = [
     dataIndex: 'sellerReply',
     key: 'sellerReply',
     width: 120
-  },
-  {
-    title: '创建时间',
-    dataIndex: 'createTime',
-    key: 'createTime',
-    width: 160
   },
   {
     title: '售后状态',
@@ -97,6 +121,14 @@ const searchParam = ref({
   orderId: ''
 })
 
+const editModalVisible = ref(false)
+const refundForm = ref({
+  orderId: '',
+  totalPrice: '',
+  actualRefundAmount: undefined,
+  sellerReply: ''
+})
+
 const resetPage = () => {
   searchParam.value.currentPage = 1
   pagination.value.current = 1
@@ -121,7 +153,7 @@ const getAfterSalesListByPage = async (page) => {
 getAfterSalesListByPage()
 
 const stateColorMap = new Map()
-stateColorMap.set('售后完成', 'green')
+stateColorMap.set('售后成功', 'green')
 stateColorMap.set('售后中', 'red')
 
 const onSearch = async () => {
@@ -151,6 +183,34 @@ const onSearch = async () => {
  */
 const refusal = async (orderId) => {
   console.log(orderId)
+  const param = {
+    orderId: orderId
+  }
+  await updateAfterSalesInfo(param)
+}
+
+const openEditModal = async (order) => {
+  editModalVisible.value = true
+  refundForm.value.orderId = order.orderId
+  refundForm.value.totalPrice = order.totalPrice
+}
+
+const okButtonLoading = ref(false)
+const editForm = ref()
+const onRefund = async () => {
+  editForm.value.validate().then(async () => {
+    console.log(refundForm.value)
+    okButtonLoading.value = true
+    await updateAfterSalesInfo(refundForm.value)
+      .then(() => {
+        okButtonLoading.value = false
+        editModalVisible.value = false
+        refundForm.value = {}
+      })
+      .catch(() => {
+        okButtonLoading.value = false
+      })
+  })
 }
 </script>
 
@@ -186,10 +246,10 @@ const refusal = async (orderId) => {
         {{ record.totalPrice ? `￥${record.totalPrice}` : '-' }}
       </template>
       <template v-if="column.key === 'requestRefundAmount'">
-        {{ record.refundAmount ? `￥${record.requestRefundAmount}` : '-' }}
+        {{ record.requestRefundAmount ? `￥${record.requestRefundAmount}` : '-' }}
       </template>
       <template v-if="column.key === 'action'">
-        <span>
+        <span v-if="record.state === '售后中'">
           <a @click="openEditModal(record)">处理售后</a>
           <a-divider type="vertical" />
           <a-popconfirm
@@ -204,6 +264,51 @@ const refusal = async (orderId) => {
       </template>
     </template>
   </a-table>
+  <a-modal
+    v-model:open="editModalVisible"
+    title="售后处理"
+    centered
+    @cancel="refundForm = {}"
+    @ok="onRefund"
+    cancelText="取消"
+    okText="确定"
+    :ok-button-props="{ loading: okButtonLoading }"
+  >
+    <a-form :label-col="{ span: 5 }" :wrapper-col="{ span: 20 }" :model="refundForm" ref="editForm">
+      <a-form-item
+        label="退款金额"
+        name="actualRefundAmount"
+        required
+        tooltip="请输入实际退款金额，不可超过用户的总支付金额"
+        :rules="[
+          {
+            required: true,
+            message: '请输入实际退款金额',
+            trigger: 'blur'
+          }
+        ]"
+      >
+        <a-input-number
+          v-model:value="refundForm.actualRefundAmount"
+          placeholder="请输入实际退款金额，不可超过用户的总支付金额"
+          prefix="￥"
+          :max="refundForm.totalPrice"
+          min="0"
+          autofocus
+          style="width: 100%"
+        />
+      </a-form-item>
+      <a-form-item label="卖家回复" name="sellerReply">
+        <a-textarea
+          v-model:value="refundForm.sellerReply"
+          :rows="4"
+          showCount
+          placeholder="请输入您的回复"
+          :maxlength="200"
+        />
+      </a-form-item>
+    </a-form>
+  </a-modal>
 </template>
 
 <style scoped>

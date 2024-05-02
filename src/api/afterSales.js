@@ -11,3 +11,7 @@ export const getAfterSalesByOrderId = (searchParam) => {
     }
   })
 }
+
+export const updateAfterSalesInfo = (searchParam) => {
+  return request.post('/afterSales/updateAfterSalesInfo', { ...searchParam })
+}

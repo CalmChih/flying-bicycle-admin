@@ -9,3 +9,7 @@ export const adminLogin = (account) => {
 export const logout = () => {
   return request.post('/logout')
 }
+
+export const adminCheckLogin = () => {
+  return request.get('/adminCheckLogin')
+}

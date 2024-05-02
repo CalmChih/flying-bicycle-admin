@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { useUserStore } from '@/stores/index.js'
+import { adminCheckLogin } from '@/api/login.js'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -63,23 +64,35 @@ const router = createRouter({
 
 const noAuthUrls = '/login'
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const userStore = useUserStore()
-  if (noAuthUrls === to.path || (userStore.isLogin && userStore.isAdmin)) {
+  if (noAuthUrls === to.path) {
     return true
   }
-  if (!userStore.isAdmin) {
-    message.error('该账号不是管理员账号')
+  if (userStore.isLogin && userStore.isAdmin) {
+    const { data } = await adminCheckLogin()
+    if (true === data) {
+      return true
+    } else {
+      message.error('请登录后再试')
+      router.push({
+        path: '/login',
+        query: {
+          backUrl: to.fullPath
+        }
+      })
+      return false
+    }
   } else {
     message.error('请登录后再试')
+    router.push({
+      path: '/login',
+      query: {
+        backUrl: to.fullPath
+      }
+    })
+    return false
   }
-  router.push({
-    path: '/login',
-    query: {
-      backUrl: to.fullPath
-    }
-  })
-  return false
 })
 
 export default router

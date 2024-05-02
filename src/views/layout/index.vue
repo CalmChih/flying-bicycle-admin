@@ -6,7 +6,8 @@ import {
   AccountBookOutlined,
   LineChartOutlined,
   UserOutlined,
-  ShoppingOutlined
+  ShoppingOutlined,
+  ShopOutlined
 } from '@ant-design/icons-vue'
 import { useRouter, useRoute } from 'vue-router'
 import { logout } from '@/api/login.js'
