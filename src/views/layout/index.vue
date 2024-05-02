@@ -58,9 +58,16 @@ const adminLogout = async () => {
       <div class="header">
         <span class="title"> 自行车在线租赁管理系统 </span>
         <a-dropdown placement="bottom">
-          <a-avatar size="large" style="margin-right: 20px; margin-top: 5px">
-            <template #icon><UserOutlined /></template>
-          </a-avatar>
+          <div>
+            <a-avatar size="large">
+              <template #icon>
+                <UserOutlined />
+              </template>
+            </a-avatar>
+            <span style="font-size: 16px; text-align: right; color: #323843; margin-left: 8px">
+              {{ userStore.username }}
+            </span>
+          </div>
           <template #overlay>
             <a-menu>
               <a-menu-item @click="adminLogout" style="text-align: center"> 退出登录 </a-menu-item>

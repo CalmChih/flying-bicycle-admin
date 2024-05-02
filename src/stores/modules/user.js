@@ -27,7 +27,7 @@ export const useUserStore = defineStore(
       username.value = ''
     }
 
-    return { tokenInfo, setTokenInfo, setUsername, isLogin, isAdmin, logout }
+    return { tokenInfo, username, setTokenInfo, setUsername, isLogin, isAdmin, logout }
   },
   {
     persist: true

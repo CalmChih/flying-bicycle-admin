@@ -11,3 +11,11 @@ export const getOrderInfo = (searchParam) => {
     }
   })
 }
+
+export const getGoodsRentalRanking = () => {
+  return request.get('/order/getGoodsRentalRanking')
+}
+
+export const getOrderTrend = (searchParams) => {
+  return request.post('/order/getOrderTrend', { ...searchParams })
+}

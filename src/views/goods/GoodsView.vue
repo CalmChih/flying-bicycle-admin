@@ -262,6 +262,10 @@ const onUpdateGoodsNum = async () => {
   goodsItem.value = {}
   await getGoodsListByPage()
 }
+const editGoodsNumModalCancel = () => {
+  editGoodsNumModalVisible.value = false
+  goodsItem.value = {}
+}
 
 const tagChanged = (tagsArr) => {
   goodsItem.value.goodsTags = tagsArr.join(',')
