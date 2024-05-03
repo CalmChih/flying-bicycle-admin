@@ -40,6 +40,7 @@ const pageHeader = [
   { key: 'TagView', title: '标签管理' },
   { key: 'OrderView', title: '订单管理' },
   { key: 'AfterSalesView', title: '售后管理' },
+  { key: 'UserView', title: '用户管理' },
   { key: 'AnalysisView', title: '统计分析' }
 ]
 const selectedMenuTitle = ref('')
@@ -99,6 +100,10 @@ const adminLogout = async () => {
           <a-menu-item key="AfterSalesView" title="售后管理">
             <ShoppingOutlined />
             <span>售后管理</span>
+          </a-menu-item>
+          <a-menu-item key="UserView" title="用户管理">
+            <UserOutlined />
+            <span>用户管理</span>
           </a-menu-item>
           <a-menu-item key="AnalysisView" title="统计分析">
             <LineChartOutlined />
