@@ -73,8 +73,8 @@ const getOrderTrendData = async () => {
   orderTrend = echarts.init(orderTrendRef.value)
   orderTrend.showLoading()
   const searchParams = {
-    startTime: dayjs().subtract(6, 'day').format('YYYY-MM-DD'),
-    endTime: dayjs().format('YYYY-MM-DD')
+    startTime: dayjs().subtract(6, 'day').format('YYYY-MM-DDT00:00:00'),
+    endTime: dayjs().format('YYYY-MM-DDT23:59:59')
   }
   const { data } = await getOrderTrend(searchParams)
   orderTrendOption.dataset[0].source = data
