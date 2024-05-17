@@ -5,6 +5,7 @@ import {
   getAfterSalesList,
   updateAfterSalesInfo
 } from '@/api/afterSales.js'
+import { message } from 'ant-design-vue'
 
 const pagination = ref({
   showSizeChanger: true, // 是否可以改变每页显示的条数
@@ -182,11 +183,11 @@ const onSearch = async () => {
  * @returns {Promise<void>}
  */
 const refusal = async (orderId) => {
-  console.log(orderId)
   const param = {
     orderId: orderId
   }
   await updateAfterSalesInfo(param)
+  message.success('驳回申请成功')
 }
 
 const openEditModal = async (order) => {
@@ -202,10 +203,14 @@ const onRefund = async () => {
     console.log(refundForm.value)
     okButtonLoading.value = true
     await updateAfterSalesInfo(refundForm.value)
-      .then(() => {
+      .then(async (resp) => {
         okButtonLoading.value = false
         editModalVisible.value = false
         refundForm.value = {}
+        if (resp.code === '200') {
+          message.success('退款成功')
+          await getAfterSalesListByPage()
+        }
       })
       .catch(() => {
         okButtonLoading.value = false
